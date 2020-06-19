@@ -12,11 +12,11 @@
 
 Клонируем репозиторий
 ```
-git clone https://github.com/madd88/symfony_cbr
+git clone https://github.com/madd88/symfony.phoneBook
 ```
 Прописываем доступ к базе данных в файле конфигурации .env
 ```
-DATABASE_URL=mysql://user:password@127.0.0.1:3306/cbr
+DATABASE_URL=mysql://user:password@127.0.0.1:3306/db_name
 ```
 Запускаем
 ```
