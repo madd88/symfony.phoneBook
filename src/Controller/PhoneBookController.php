@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\PhoneBook;
 use App\Form\PhoneBookType;
 use App\Repository\PhoneBookRepository;
+use App\Service\PhoneBookService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,6 +17,12 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class PhoneBookController extends AbstractController
 {
+    private $pbService;
+
+    public function __construct(PhoneBookService $phoneBookService) {
+        $this->pbService = $phoneBookService;
+    }
+
     /**
      * @Route("/", name="phone_book_index", methods={"GET"})
      */
@@ -34,26 +41,21 @@ class PhoneBookController extends AbstractController
         $phoneBook = new PhoneBook();
         $form = $this->createForm(PhoneBookType::class, $phoneBook);
         $phone = preg_replace('/\D/', '', $request->request->get('phone_book')['phone']);
+        $fullName = $request->request->get('phone_book')['full_name'];
+        $params = [
+            'phone' => $phone,
+            'full_name' => $fullName
+        ];
         $request->request->set('phone', $phone);
         $form->handleRequest($request);
 
         $phoneBookRepository = $this->getDoctrine()->getRepository(PhoneBook::class);
-        if ($phoneBookRepository->findAllBy(
-            [
-                'full_name'=> $request->request->get('phone_book')['full_name'],
-                'phone'=> $phone,
-            ]
-        )) {
+        if ($phoneBookRepository->findAllBy($params)) {
             $form->addError(new FormError("Такая запись уже существует"));
         }
 
         if ($form->isSubmitted() && $form->isValid()) {
-
-            $phoneBook->setPhone($phone);
-
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($phoneBook);
-            $entityManager->flush();
+            $this->pbService->new($params);
 
             return $this->redirectToRoute('phone_book_index');
         }
@@ -80,10 +82,17 @@ class PhoneBookController extends AbstractController
     public function edit(Request $request, PhoneBook $phoneBook): Response
     {
         $form = $this->createForm(PhoneBookType::class, $phoneBook);
+        $phone = preg_replace('/\D/', '', $request->request->get('phone_book')['phone']);
+        $fullName = $request->request->get('phone_book')['full_name'];
+        $params = [
+            'phone' => $phone,
+            'full_name' => $fullName
+        ];
+
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $this->pbService->edit($params, $phoneBook);
 
             return $this->redirectToRoute('phone_book_index');
         }
