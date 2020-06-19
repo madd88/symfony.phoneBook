@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Создать запись{% endblock %}
+
+{% block body %}
+    <h1>Создать запись</h1>
+
+    {{ include('phone_book/_form.html.twig') }}
+
+    <a href="{{ path('phone_book_index') }}">Вернуться к списку</a>
+{% endblock %}

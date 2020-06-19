@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Редактирование записи{% endblock %}
+
+{% block body %}
+    <h1>Редактирование записи</h1>
+
+    {{ include('phone_book/_form.html.twig', {'button_label': 'Сохранить'}) }}
+    <p></p>
+    <a href="{{ path('phone_book_index') }}">Вернуться к списку</a>
+    <p></p>
+    {{ include('phone_book/_delete_form.html.twig') }}
+{% endblock %}

@@ -1,0 +1,64 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Телефонный справочник{% endblock %}
+
+{% block body %}
+    <h1>Телефонный справочник</h1>
+
+    <form >
+        <div class="form-row">
+
+            <div class="form-group col-md-3">
+                <label for="full_name">ФИО</label>
+                <input class="form-control" type="text" name="full_name"/>
+            </div>
+            <div class="form-group col-md-3">
+                <label for="phone">Телефон</label>
+                <input class="form-control" type="tel" name="phone"/>
+            </div>
+        </div>
+        <div class="form-group">
+
+        </div>
+        <div class="form-group">
+            <button class="btn btn-info" id="phone_search_button">Поиск</button>
+            <input type="reset" class="btn btn-danger" value="Очистить"/>
+        </div>
+    </form>
+
+    <table
+            class="table"
+            id="phone_book_table"
+            data-show-pagination-switch="true"
+            data-pagination="true"
+            data-id-field="id"
+            data-page-list="[10, 25, 50, 100, all]">
+        <thead>
+        <tr>
+            <th data-field="id">Id</th>
+            <th data-field="full_name">ФИО абонента</th>
+            <th data-field="phone">Телефон</th>
+            <th data-field="links">Дейсвие</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for phone_book in phone_books %}
+            <tr>
+                <td>{{ phone_book.id }}</td>
+                <td>{{ phone_book.fullName }}</td>
+                <td>{{ phone_book.phone }}</td>
+                <td>
+                    <a href="{{ path('phone_book_show', {'id': phone_book.id}) }}">show</a>
+                    <a href="{{ path('phone_book_edit', {'id': phone_book.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="4">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a class="btn btn-success" href="{{ path('phone_book_new') }}">Создать запись</a>
+{% endblock %}
